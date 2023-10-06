@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" id="YourHolidayRequests">
+        <div class="row justify-content-between mt-5">
+            <h3 class="col">Your Holiday Requests</h3>
+            <div class="col-sm-12 col-md-1 justify-content-evenly">
+                <button class="col-12 btn btn-outline-secondary btn-sm active" type="button" data-bs-toggle="collapse" data-bs-target="#collapseYourRequests" aria-expanded="true" aria-controls="collapseYourRequests">
+                    Hide
+                </button>
+            </div>
+            <hr class="m-0 mt-1"/>
+        </div>
+        <div class="row collapse show" id="collapseYourRequests">       
+            {% if holiday_requests %} 
+                {% for holreq in holiday_requests %}
+                    <div class="col-sm-12 col-md-6 col-lg-3 mt-5">
+                        <div class="card {% if holreq.approved %} border-success {% elif holreq.approved == null %} {% elif not holreq.approved %} border-danger {% endif %}">                            
+                            <div class="card-body">
+                                <h5 class="card-title">Holiday Request:</h5>
+                                <p class="card-text">{{ holreq.start_date | date:"SHORT_DATE_FORMAT"}} to {{ holreq.end_date | date:"SHORT_DATE_FORMAT" }}</p>
+                                <a href="/requests/{{ holreq.id }}/" class="btn btn-primary">See Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}                                
+            {% else %}
+                <p>No requests have been made.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container" id="HolidayRequestsAwaitingAprroval">
+        <div class="row justify-content-between mt-5">
+            <h3 class="col">Holiday Requests Awaiting Approval</h3>
+            <div class="col-sm-12 col-md-1 justify-content-evenly">
+                <button class="col-12 btn btn-outline-secondary btn-sm active" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAwaitingRequests" aria-expanded="true" aria-controls="collapseAwaitingRequests">
+                    Hide
+                </button>
+            </div>
+            <hr class="m-0 mt-1"/>
+        </div>
+        <div class="row collapse show" id="collapseAwaitingRequests">       
+            {% if awaiting_requests %} 
+                {% for holreq in awaiting_requests %}
+                    <div class="col-sm-12 col-md-6 col-lg-3 mt-5">
+                        <div class="card {% if holreq.approved %} border-success {% elif holreq.approved == null %} border-warning {% elif not holreq.approved %} border-danger {% endif %}">
+                            <div class="card-header">
+                                Requested by {{ holreq.requested_by }}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Holiday Request:</h5>
+                                <p class="card-text">{{ holreq.start_date | date:"SHORT_DATE_FORMAT"}} to {{ holreq.end_date | date:"SHORT_DATE_FORMAT" }}</p>
+                                <a href="/requests/{{ holreq.id }}/approve/" class="btn btn-primary">See Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}                                
+            {% else %}
+                <p>No requests are awaiting your approval.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('[data-bs-toggle="collapse"]').click(function() {
+                $(this).toggleClass( "active" );
+                if ($(this).hasClass("active")) {
+                    $(this).text("Hide");
+                } else {
+                    $(this).text("Show");
+                }
+            });
+        })
+    </script>
+{% endblock %}
