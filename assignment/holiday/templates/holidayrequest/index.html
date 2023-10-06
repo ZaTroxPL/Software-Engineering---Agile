@@ -19,7 +19,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">Holiday Request:</h5>
                                 <p class="card-text">{{ holreq.start_date | date:"SHORT_DATE_FORMAT"}} to {{ holreq.end_date | date:"SHORT_DATE_FORMAT" }}</p>
-                                <a href="/requests/{{ holreq.id }}/" class="btn btn-primary">See Details</a>
+                                {% if holreq.approved == null %} 
+                                    <a href="/requests/{{ holreq.id }}/" class="btn btn-primary" {% if holreq.approved == null %} {% elif holreq.approved or not holreq.approved %} disabled {% endif %}>See Details</a>                                
+                                {% endif %}                                
                             </div>
                         </div>
                     </div>
@@ -50,7 +52,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">Holiday Request:</h5>
                                 <p class="card-text">{{ holreq.start_date | date:"SHORT_DATE_FORMAT"}} to {{ holreq.end_date | date:"SHORT_DATE_FORMAT" }}</p>
-                                <a href="/requests/{{ holreq.id }}/approve/" class="btn btn-primary">See Details</a>
+                                {% if holreq.approved == null %}
+                                    <a href="/requests/{{ holreq.id }}/approve/" class="btn btn-primary">See Details</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

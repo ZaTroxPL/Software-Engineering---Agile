@@ -15,14 +15,20 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url="/login")
 def requests(request):
     holiday_requests = HolidayRequest.objects.filter(requested_by=request.user).order_by('-requested_date')
-    employee = Employee.objects.get(user=request.user)
-    approvingEmployees = Employee.objects.filter(belonging_group=employee.approval_group)
 
+    employee = Employee.objects.get(user=request.user)
+    approving_employees = Employee.objects.filter(approval_group=employee.belonging_group)
     query = Q()
-    for approvingEmployee in approvingEmployees:
+    for approvingEmployee in approving_employees:
         query |= Q(requested_by=approvingEmployee.user)
 
-    awaiting_requests = HolidayRequest.objects.filter(query)
+    #if query is empty, make sure it isn't used
+    if not query.children:
+        awaiting_requests = HolidayRequest.objects.none
+    else:
+        query &= Q(approved=None)
+        awaiting_requests = HolidayRequest.objects.filter(query).order_by('-requested_date')
+
     context = {
         "holiday_requests": holiday_requests,
         "awaiting_requests": awaiting_requests
